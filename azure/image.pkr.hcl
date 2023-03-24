@@ -1,11 +1,15 @@
 packer {
   required_plugins {
-    amazon = {
-      version = ">= 0.0.1"
-      source = "github.com/hashicorp/amazon"
+    azure = {
+      version = ">= 1.4.1"
+      source  = "github.com/hashicorp/azure"
     }
   }
 }
+
+variable subscription-id          {}
+variable client-id                {}
+variable client-secret            {}
 
 variable region                   {  default = "us-east-1"}
 variable localize                 {  default = "english"}
@@ -111,17 +115,24 @@ source "amazon-ebs" "this" {
   user_data_file        = lookup(var.ud-winrm-script, var.localize, var.ud-winrm-script-default) 
 }
 
-source "azure-arm" "basic-example" {
+source "azure-arm" "this" {
+
+  subscription_id = var.subscription-id
+  client_id = var.client-id
+  client_secret = var.client-secret
+
   os_type = "Linux"
   image_publisher = "Canonical"
   image_offer = "UbuntuServer"
   image_sku = "14.04.4-LTS"
+  
+ 
 }
 
 build {
   name    = "ol-win"
 
-  sources = ["source.amazon-ebs.this"]
+  sources = ["source.azure-arm.this"]
 
   provisioner powershell {
 
