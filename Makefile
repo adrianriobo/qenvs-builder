@@ -4,11 +4,21 @@ CONTAINER_MANAGER ?= podman
 IMG ?= quay.io/rhqp/qenvs-builder:v${VERSION}
 
 # Build the container image
-.PHONY: oci-build-aws-windows
-oci-build-aws-windows: 
+.PHONY: build-aws-windows
+build-aws-windows: 
 	${CONTAINER_MANAGER} build -t ${IMG}-aws-windows -f windows/oci/Containerfile aws
+.PHONY: build-azure-windows
+build-azure-windows: 
+	${CONTAINER_MANAGER} build -t ${IMG}-azure-windows -f windows/oci/Containerfile azure
+.PHONY: build
+build: build-aws-windows build-azure-windows
 
 # Push the container image
-.PHONY: oci-push-aws-windows
-oci-push-aws-windows:
+.PHONY: push-aws-windows
+push-aws-windows:
 	${CONTAINER_MANAGER} push ${IMG}-aws-windows
+.PHONY: push-azure-windows
+push-azure-windows:
+	${CONTAINER_MANAGER} push ${IMG}-azure-windows
+.PHONY: push
+push: push-aws-windows push-azure-windows
