@@ -2,9 +2,10 @@ FROM mcr.microsoft.com/azure-cli:2.46.0
 
 WORKDIR /workspace
 
-COPY azure .
+# COPY . .
 
-RUN apk add --no-cache --update packer \
-    mv oci/entrypoint.sh /usr/local/bin
+RUN apk add --no-cache --update packer 
+    # mv oci/entrypoint.sh /usr/local/bin
 
-ENTRYPOINT entrypoint.sh
+# ENTRYPOINT entrypoint.sh
+ENTRYPOINT packer

@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# random password
+# tr -dc A-Z.a-z[*0-9 </dev/urandom | head -c 13 ; echo ''
+
 VALID_CONFIG=true
 
 if [ -z "${AWS_ACCESS_KEY_ID+x}" ] || [ -z "${AWS_SECRET_ACCESS_KEY+x}" ]; then 

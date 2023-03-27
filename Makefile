@@ -9,7 +9,7 @@ build-aws-windows:
 	${CONTAINER_MANAGER} build -t ${IMG}-aws-windows -f windows/oci/Containerfile aws
 .PHONY: build-azure-windows
 build-azure-windows: 
-	${CONTAINER_MANAGER} build -t ${IMG}-azure-windows -f windows/oci/Containerfile azure
+	${CONTAINER_MANAGER} build -t ${IMG}-azure-windows -f oci/Containerfile azure
 .PHONY: build
 build: build-aws-windows build-azure-windows
 
