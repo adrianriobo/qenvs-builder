@@ -1,0 +1,13 @@
+FROM docker.io/hashicorp/packer:1.8
+
+WORKDIR /workspace
+
+# Packer scripts
+# COPY generalize.ps1 enable-autologon.ps1 image.pkr.hcl rhqp-ci-setup.ps1 ./
+COPY *.ps1 image.pkr.hcl ./
+# entrypoint helper
+COPY oci/entrypoint.sh /usr/local/bin
+
+RUN apk add --update jq openssh-keygen
+
+ENTRYPOINT entrypoint.sh

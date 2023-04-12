@@ -20,13 +20,17 @@ variable location                   { default = "westus" }
 
 # Config
 variable admin-user                 { default = "hrqpadmin"}
-variable admin-pass                 { default = "SuperS3cr3t!!!!" }
+variable admin-pass                 {}
 variable username                   { default = "rhqp" } 
-variable password                   { default = "auN=vC%&27ITSj1<" }
-variable authorized-keys            { default = "Required to be fullfilled during userdata exec" }
+variable password                   {}
+variable authorized-keys-filename   { default = "id_rsa.pub" }
 
 # Target
 variable target-rgn                 { default = "QE_Platform" }
+
+# Metadata
+variable owner                      { default = "ariobolo@redhat.com" }
+variable team                       { default = "rhqp" }
 
 source "azure-arm" "this" {
 
@@ -48,17 +52,13 @@ source "azure-arm" "this" {
   winrm_use_ssl         = true
   winrm_insecure        = true
 
-
-  # Recommended property https://developer.hashicorp.com/packer/plugins/builders/azure/arm#user_data_file
-  // user_data_file        = var.ud-winrm-script-default
-
   managed_image_resource_group_name = var.target-rgn
   // https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-abbreviations
   managed_image_name = "it-rhqp-win${var.version}-${var.feature-update}"
 
   azure_tags = {
-    owner   = "ariobolo@redhat.com"
-    team    = "rhqp"
+    owner   = "${var.owner}"
+    team    = "${var.team}"
   }
 }
 
@@ -77,7 +77,7 @@ build {
   }
   provisioner "windows-restart" {}
 
-
+  # Setup requirements for rhqp
   provisioner powershell {
 
     elevated_user = var.admin-user 
@@ -86,15 +86,19 @@ build {
     environment_vars = [
       "USERNAME=${var.username}",
       "PASSWORD=${var.password}",
-      "AUTHORIZEDKEY=${var.authorized-keys}"]
-    script           = "./setup.ps1"
+      "AUTHORIZEDKEY=${file("${var.authorized-keys-filename}")}"]
+    script           = "./rhqp-ci-setup.ps1"
   }
 
+  # Generalize
+  provisioner "windows-restart" {}
+  provisioner powershell {
+    script           = "./generalize.ps1"
+  }
+  
+  # Output
   post-processor manifest {
         output = "manifest.json"
         strip_path = true      
   }
-
-  // TODO postscript to disable winrm
-  // https://github.com/hashicorp/packer-plugin-azure/blob/main/example/windows.json
 }
