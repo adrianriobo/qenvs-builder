@@ -6,7 +6,7 @@ IMG ?= quay.io/rhqp/qenvs-builder:v${VERSION}
 # Build the container image
 .PHONY: build-aws-windows
 build-aws-windows: 
-	${CONTAINER_MANAGER} build -t ${IMG}-aws-windows -f windows/oci/Containerfile aws
+	${CONTAINER_MANAGER} build -t ${IMG}-aws-windows -f windows/aws/oci/Containerfile .
 .PHONY: build-azure-windows
 build-azure-windows: 
 	${CONTAINER_MANAGER} build -t ${IMG}-azure-windows -f oci/Containerfile azure
