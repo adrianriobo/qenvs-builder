@@ -1,8 +1,8 @@
-FROM docker.io/hashicorp/packer:1.8
+FROM docker.io/hashicorp/packer:1.9
 
 WORKDIR /workspace
 # context is packer folder
-COPY windows .
+COPY windows/aws .
 
 RUN apk add --update curl aws-cli jq \
     && mv oci/entrypoint.sh /usr/local/bin

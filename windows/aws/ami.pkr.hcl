@@ -56,14 +56,14 @@ variable crc-version            {  default = "" }
 variable default-aws-region     {  default= "us-east-1" }
 
 locals {
-  if-install-crc              = var.crc-distributable-url != "" ? "amazon-ebs.this" "none"
+  if-install-crc              = var.crc-distributable-url != "" ? "amazon-ebs.this" : "none"
   crc-distributable-name      = "crc-windows-installer.zip"
   crc-msi                     = "crc-windows-amd64.msi"
 
   target-ami-name             = join("-", 
                                   [
                                     lookup(var.target-ami-name, var.localize, var.target-ami-name-default),
-                                    var.crc-distributable-url != "" ? "OCPL-${var.crc-version}" "HyperV",
+                                    var.crc-distributable-url != "" ? "OCPL-${var.crc-version}" : "HyperV",
                                     "RHQE"])
 
   builder-debug-types        = ["t2.medium", 
@@ -90,7 +90,7 @@ source "amazon-ebs" "this" {
   ami_name              = local.target-ami-name
   communicator          = "winrm"
   # If we build english base image already has hyper-v only contraint is for ocpl
-  spot_instance_types   = var.localize == "english" ? local.builder-ocpl-types local.builder-hyperv-types
+  spot_instance_types   = var.localize == "english" ? local.builder-ocpl-types : local.builder-hyperv-types
 
   # Use spot instance for building process
 	spot_price            = "auto"
