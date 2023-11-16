@@ -16,12 +16,12 @@ variable username                 {  default = "ec2-user"}
 variable password                 {  default = "auN=vC%&27ITSj1<"}
 variable authorized-keys          {  default = "Required to be fullfilled during userdata exec"}
 
-variable source-ami-name-default  {  default = "Windows_Server-2019-English-Full-HyperV*"}
+variable source-ami-name-default  {  default = "Windows_Server-2022-English-Full-Base*"}
 variable source-ami-name          {
   type = map(string)
   default = {
-    "english" = "Windows_Server-2019-English-Full-HyperV*"
-    "spanish" = "Windows_Server-2019-Spanish-Full-Base*"
+    "english" = "Windows_Server-2022-English-Full-Base*"
+    "spanish" = "Windows_Server-2022-Spanish-Full-Base*"
   }
 }
 variable source-admin-user-default  {  default = "Administrator"}
@@ -40,12 +40,12 @@ variable ud-winrm-script {
     "spanish" = "./ud_winrm_Spanish.ps1"
   }
 }
-variable target-ami-name-default  {  default = "Windows_Server-2019-English-Full"}
+variable target-ami-name-default  {  default = "Windows_Server-2022-English-Full"}
 variable target-ami-name {
   type = map(string)
   default = {
-    "english" = "Windows_Server-2019-English-Full"
-    "spanish" = "Windows_Server-2019-Spanish-Full"
+    "english" = "Windows_Server-2022-English-Full"
+    "spanish" = "Windows_Server-2022-Spanish-Full"
   }
 }
 
@@ -90,7 +90,7 @@ source "amazon-ebs" "this" {
   ami_name              = local.target-ami-name
   communicator          = "winrm"
   # If we build english base image already has hyper-v only contraint is for ocpl
-  spot_instance_types   = var.localize == "english" ? local.builder-ocpl-types : local.builder-hyperv-types
+  spot_instance_types   = local.builder-hyperv-types
 
   # Use spot instance for building process
 	spot_price            = "auto"
@@ -160,14 +160,12 @@ build {
     only    = [local.if-install-crc]
   }
 
-
-  provisioner powershell {
+  provisioner "powershell" {
     inline = [
-      # Re-initialise the AWS instance on startup
-      # https://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/ec2-windows-user-data.html#user-data-scripts-subsequent
-      "C:/ProgramData/Amazon/EC2-Windows/Launch/Scripts/InitializeInstance.ps1 -Schedule",
-      # Remove system specific information from this image
-      # "C:/ProgramData/Amazon/EC2-Windows/Launch/Scripts/SysprepInstance.ps1 -NoShutdown"
+      #Sysprep the instance with ECLaunch v2. Reset enables runonce scripts again.
+      "Set-Location $env:programfiles/amazon/ec2launch",
+      "./ec2launch.exe reset -c -b",
+      "./ec2launch.exe sysprep -c -b"
     ]
   }
 

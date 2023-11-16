@@ -29,7 +29,8 @@ switch ($osProductType)
 }
 
 # Install sshd
-Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+curl.exe -LO https://github.com/PowerShell/Win32-OpenSSH/releases/download/v9.4.0.0p1-Beta/OpenSSH-Win64-v9.4.0.0.msi
+Start-Process C:\Windows\System32\msiexec.exe -ArgumentList "/qb /i OpenSSH-Win64-v9.4.0.0.msi /norestart" -wait
 Set-Service -Name sshd -StartupType 'Manual'
 # This generate ssh certs + config file for us
 Start-Service sshd
