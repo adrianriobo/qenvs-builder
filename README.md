@@ -24,4 +24,3 @@ THis will setup a windows image with:
 Following links show how to use this project for building custom images:
 
 * on [aws](docs/windows/aws.md)
-* on [azure](docs/windows/azure.md)  
