@@ -1,0 +1,4 @@
+name: aws-windows
+runtime: go
+backend:
+  url: file:///home/ariobolo/data/qenvs/aws-windows
