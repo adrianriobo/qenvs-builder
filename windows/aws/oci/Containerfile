@@ -1,4 +1,4 @@
-FROM docker.io/hashicorp/packer:1.9
+FROM docker.io/hashicorp/packer:1.10
 
 WORKDIR /workspace
 # context is packer folder

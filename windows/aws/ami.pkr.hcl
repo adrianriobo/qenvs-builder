@@ -109,6 +109,11 @@ source "amazon-ebs" "this" {
 
   # Recommended property https://developer.hashicorp.com/packer/plugins/builders/amazon/ebs#user_data
   user_data_file        = lookup(var.ud-winrm-script, var.localize, var.ud-winrm-script-default) 
+
+  # Fast launch
+  // fast_launch {
+  //   enable_fast_launch = true
+  // }
 }
 
 build {
@@ -164,8 +169,9 @@ build {
     inline = [
       #Sysprep the instance with ECLaunch v2. Reset enables runonce scripts again.
       "Set-Location $env:programfiles/amazon/ec2launch",
-      "./ec2launch.exe reset -c -b",
-      "./ec2launch.exe sysprep -c -b"
+      "./ec2launch.exe reset",
+      "Set-Location C:\\Windows\\System32\\Sysprep",
+      "./Sysprep.exe /oobe /shutdown /generalize /unattend:C:\\ProgramData\\Amazon\\EC2Launch\\sysprep\\unattend.xml /quiet"
     ]
   }
 
